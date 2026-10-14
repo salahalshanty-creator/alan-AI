@@ -1,0 +1,71 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User account profile information and preferences",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "email": { "type": "string", "description": "User email address" },
+        "displayName": { "type": "string", "description": "Full name of the user" },
+        "phoneNumber": { "type": "string", "description": "Contact phone number" },
+        "companyName": { "type": "string", "description": "Associated company or business" },
+        "role": { "type": "string", "enum": ["customer", "admin"], "description": "User permission role" },
+        "createdAt": { "type": "string", "description": "ISO timestamp of account creation" },
+        "updatedAt": { "type": "string", "description": "ISO timestamp of last profile update" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Commercial print and packaging order details",
+      "type": "object",
+      "properties": {
+        "orderNumber": { "type": "string", "description": "Human-readable order tracking ID" },
+        "userId": { "type": "string", "description": "UID of the user who placed the order or guest" },
+        "customer": { "type": "object", "description": "Customer contact and delivery details" },
+        "items": { "type": "array", "description": "List of configured print cart items" },
+        "subtotal": { "type": "number", "description": "Subtotal before VAT" },
+        "vat": { "type": "number", "description": "5% UAE VAT amount" },
+        "deliveryFee": { "type": "number", "description": "Delivery charge" },
+        "total": { "type": "number", "description": "Final total order amount in AED" },
+        "status": { "type": "string", "enum": ["submitted", "prepress", "printing", "finishing", "dispatched", "delivered"], "description": "Order fulfillment status" },
+        "paymentMethod": { "type": "string", "description": "Chosen payment method" },
+        "paymentStatus": { "type": "string", "description": "Payment authorization state" },
+        "createdAt": { "type": "string", "description": "ISO timestamp of order creation" }
+      },
+      "required": ["orderNumber", "total", "status"]
+    },
+    "CustomQuote": {
+      "title": "CustomQuote",
+      "description": "Custom luxury print and bespoke packaging quotation inquiry",
+      "type": "object",
+      "properties": {
+        "quoteId": { "type": "string", "description": "Unique quotation inquiry reference" },
+        "userId": { "type": "string", "description": "UID of submitting user if authenticated" },
+        "fullName": { "type": "string", "description": "Customer name" },
+        "email": { "type": "string", "description": "Contact email" },
+        "phone": { "type": "string", "description": "Contact telephone number" },
+        "companyName": { "type": "string", "description": "Company name" },
+        "productType": { "type": "string", "description": "Print product requested" },
+        "specifications": { "type": "string", "description": "Custom requirements and finishes" },
+        "createdAt": { "type": "string", "description": "ISO timestamp of submission" }
+      },
+      "required": ["fullName", "email", "productType"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Private user profile collection restricted to the authenticated account owner"
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Order records queryable by the placing user or tracking reference"
+    },
+    "/quotes/{quoteId}": {
+      "schema": { "$ref": "#/entities/CustomQuote" },
+      "description": "Custom print inquiry requests"
+    }
+  }
+}

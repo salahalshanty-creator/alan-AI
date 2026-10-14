@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // User profiles collection
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create, update: if isOwner(userId);
+      allow delete: if isOwner(userId);
+    }
+
+    // Orders collection
+    match /orders/{orderId} {
+      allow create: if request.resource.data.orderNumber is string
+                    && request.resource.data.total is number;
+      allow get: if true;
+      allow list: if isAuthenticated() && (resource.data.userId == request.auth.uid);
+      allow update, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid);
+    }
+
+    // Custom quote inquiries
+    match /quotes/{quoteId} {
+      allow create: if request.resource.data.fullName is string
+                    && request.resource.data.email is string;
+      allow get, list: if isAuthenticated() && (resource.data.userId == request.auth.uid);
+      allow update, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid);
+    }
+
+    // Connection testing
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+  }
+}

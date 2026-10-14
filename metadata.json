@@ -1,0 +1,8 @@
+{
+  "name": "Remix Al Wasl Printworks UAE | Luxury Printing Press \u0026 Packaging Dubai",
+  "description": "Premier commercial and bespoke printing press in the United Arab Emirates. Luxury foil-stamped business cards, custom rigid packaging, brochures, and exhibition printing with express Dubai delivery.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
